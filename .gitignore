@@ -1,0 +1,21 @@
+# SQLite database
+*.db
+*.db-journal
+
+# Go binaries and test files
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Go workspace file
+go.work
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
