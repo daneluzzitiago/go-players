@@ -13,7 +13,28 @@ type Player struct {
 	losses int
 }
 
+type Tournament struct {
+	name    string
+	id      int
+	players []Player
+	winner  Player
+}
+
 var players []Player
+
+func (t *Tournament) addPlayer(player Player) {
+	t.players = append(t.players, player)
+}
+
+func (t *Tournament) playTournament() Player {
+	for len(t.players) > 1 {
+		player1, player2 := t.players[0], t.players[1]
+		winner := playMatch(player1, player2)
+		t.players = append([]Player{winner}, t.players[2:]...)
+	}
+	t.winner = t.players[0]
+	return t.winner
+}
 
 func addNewPlayer(name string, id int) {
 	players = append(players, Player{name, id, 1, 0, 0})
@@ -61,14 +82,25 @@ func playMatch(player1 Player, player2 Player) Player {
 }
 
 func main() {
+	tournament := Tournament{name: "Amazing Tournament", id: 1}
 	addPlayer("Player1", 1, 10, 0, 0)
 	addPlayer("Player2", 2, 17, 0, 0)
 	addPlayer("Player3", 3, 14, 0, 0)
 
+	tournament.addPlayer(players[0])
+	tournament.addPlayer(players[1])
+	tournament.addPlayer(players[2])
+
 	fmt.Println("Player list:")
 	listPlayers()
 
-	player1, player2 := matchmaking()
-	winner := playMatch(player1, player2)
-	fmt.Println("Winner:", winner.name)
+	fmt.Println("Tournament players:")
+	for _, player := range tournament.players {
+		fmt.Printf("(%d) - %s, Level: %d, Wins: %d, Losses: %d\n",
+			player.id, player.name, player.level, player.wins, player.losses)
+	}
+
+	winner := tournament.playTournament()
+
+	fmt.Printf("The winner of the tournament %s is %s!\n", tournament.name, winner.name)
 }
