@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
+	"go-players/internal/api"
 	"go-players/internal/database"
 	"log"
+	"net/http"
 )
 
 func main() {
@@ -12,20 +14,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	players, err := db.GetPlayers()
-	if err != nil {
+	server := api.NewServer(db)
+
+	http.HandleFunc("/players", server.GetPlayers)
+
+	fmt.Println("Server starting on :8080...")
+	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Fatal(err)
 	}
-
-	fmt.Println("\nPlayer List:")
-	fmt.Println("----------------------------------------")
-	for _, p := range players {
-		fmt.Printf("%-25s | Level: %2d | W/L: %2d/%2d\n",
-			p.Name,
-			p.Level,
-			p.Wins,
-			p.Losses,
-		)
-	}
-	fmt.Println("----------------------------------------")
 }
